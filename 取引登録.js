@@ -83,17 +83,22 @@
 			authparams,
 			requestbody,
 			function (body, status, headers) {
+				let errorString = status;
+				const Json = JSON.parse(body);
 				switch (status) {
 					case 400:
+					case 404:
+						errorString = status;
+						for (let counter = 0; counter < Json.errors.length; counter++) {
+							errorString = errorString + '\n' + Json.errors[counter].messages[0];
+						}
+						alert('error:' + errorString);
+						break;
 					case 401:
 					case 402:
-						alert('error:' + status);
-						break;
 					case 403:
-						alert('error:403(このアプリケーションにはアクセス権限がないエンドポイントです)');
-						break;
-					case 404:
-						alert('error:' + status);
+						errorString = status + '\n' + Json.message + '\n' + Json.messages;
+						alert('error:' + errorString);
 						break;
 					case 500:
 						alert('Internal Server Error');
